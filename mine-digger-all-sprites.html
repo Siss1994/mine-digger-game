@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Digger - 전체 게임 스프라이트</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ffd700;
+            text-align: center;
+            font-size: 28px;
+        }
+        h2 {
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .sprite-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .sprite-item {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 2px solid #555;
+        }
+
+        .sprite-item:hover {
+            border-color: #ffd700;
+            transform: scale(1.05);
+            transition: all 0.2s;
+        }
+
+        canvas {
+            background: #000;
+            border: 2px solid #666;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .label {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        .desc {
+            margin-top: 4px;
+            font-size: 9px;
+            color: #666;
+        }
+
+        button {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #ffed4e;
+        }
+
+        #download-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            z-index: 1000;
+        }
+
+        .summary {
+            background: #1a3a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #00ff00;
+        }
+
+        .summary h3 {
+            color: #00ff00;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⛏️ Mine Digger - 완전한 게임 스프라이트 컬렉션</h1>
+
+        <div class="summary">
+            <h3>📊 스프라이트 요약</h3>
+            <p>✅ 캐릭터 애니메이션: 2종 (IDLE, MINING)</p>
+            <p>✅ 광물: 32종 (Tier 1~7)</p>
+            <p>✅ 곡괭이: 8종</p>
+            <p>✅ 배경: 집, 마을, 광산 7종</p>
+            <p>✅ 건물: 4종 (집, 상점, 대장간, 광산입구)</p>
+            <p>✅ NPC: 2종</p>
+            <p>✅ UI: HP바, 데미지 숫자, 버튼 등</p>
+            <p>✅ 이펙트: 타격, 파티클 등</p>
+        </div>
+
+        <!-- 캐릭터 -->
+        <div class="section">
+            <h2>👷 캐릭터 애니메이션</h2>
+            <div class="sprite-grid">
+                <div class="sprite-item">
+                    <div class="label">IDLE (대기)</div>
+                    <canvas id="char-idle" width="96" height="32"></canvas>
+                    <div class="desc">3프레임</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="label">MINING (채굴)</div>
+                    <canvas id="char-mining" width="128" height="32"></canvas>
+                    <div class="desc">4프레임</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 광물 -->
+        <div class="section">
+            <h2>💎 광물 (티어별 샘플)</h2>
+            <div class="sprite-grid" id="minerals"></div>
+        </div>
+
+        <!-- 곡괭이 -->
+        <div class="section">
+            <h2>⛏️ 곡괭이 아이템</h2>
+            <div class="sprite-grid" id="pickaxes"></div>
+        </div>
+
+        <!-- 건물 -->
+        <div class="section">
+            <h2>🏘️ 건물 오브젝트</h2>
+            <div class="sprite-grid" id="buildings"></div>
+        </div>
+
+        <!-- NPC -->
+        <div class="section">
+            <h2>👥 NPC 캐릭터</h2>
+            <div class="sprite-grid" id="npcs"></div>
+        </div>
+
+        <!-- 배경 -->
+        <div class="section">
+            <h2>🌄 배경 타일 (씬별)</h2>
+            <div class="sprite-grid" id="backgrounds"></div>
+        </div>
+
+        <!-- 광산 배경 -->
+        <div class="section">
+            <h2>⛰️ 광산 배경 (레벨별)</h2>
+            <div class="sprite-grid" id="mine-backgrounds"></div>
+        </div>
+
+        <!-- UI 요소 -->
+        <div class="section">
+            <h2>🎮 UI 컴포넌트</h2>
+            <div class="sprite-grid" id="ui"></div>
+        </div>
+
+        <!-- 이펙트 -->
+        <div class="section">
+            <h2>✨ 이펙트</h2>
+            <div class="sprite-grid" id="effects"></div>
+        </div>
+    </div>
+
+    <div id="download-section">
+        <button onclick="downloadAllSprites()">📥 전체 스프라이트 다운로드</button>
+    </div>
+
+    <script>
+        // ============ 캐릭터 애니메이션 ============
+        function drawCharacterIdle(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            const frames = [
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(22, 16, 2, 6);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                },
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 5, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 9, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 15, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 17, 2, 6); ctx.fillRect(22, 17, 2, 6);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 25, 3, 6); ctx.fillRect(17, 25, 3, 6);
+                },
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(22, 16, 2, 6);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                }
+            ];
+
+            frames.forEach((f, i) => { ctx.save(); ctx.translate(i * 32, 0); f(); ctx.restore(); });
+        }
+
+        function drawCharacterMining(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            const frames = [
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(20, 12, 2, 8);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                    ctx.fillStyle = '#8b4513'; ctx.fillRect(22, 8, 2, 8);
+                    ctx.fillStyle = '#696969'; ctx.fillRect(20, 6, 3, 2);
+                },
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(20, 14, 2, 8);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                    ctx.fillStyle = '#8b4513'; ctx.fillRect(22, 14, 2, 8);
+                    ctx.fillStyle = '#696969'; ctx.fillRect(22, 12, 3, 2);
+                },
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(20, 18, 2, 6);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                    ctx.fillStyle = '#8b4513'; ctx.fillRect(22, 22, 2, 6);
+                    ctx.fillStyle = '#696969'; ctx.fillRect(24, 26, 3, 2);
+                    ctx.fillStyle = '#ffff00'; ctx.fillRect(26, 28, 2, 2); ctx.fillRect(24, 27, 2, 2);
+                },
+                () => {
+                    ctx.fillStyle = '#ffd700'; ctx.fillRect(12, 4, 8, 4);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(12, 8, 8, 6);
+                    ctx.fillStyle = '#4169e1'; ctx.fillRect(10, 14, 12, 10);
+                    ctx.fillStyle = '#ffdbac'; ctx.fillRect(8, 16, 2, 6); ctx.fillRect(20, 16, 2, 6);
+                    ctx.fillStyle = '#2f4f4f'; ctx.fillRect(12, 24, 3, 6); ctx.fillRect(17, 24, 3, 6);
+                    ctx.fillStyle = '#8b4513'; ctx.fillRect(22, 18, 2, 6);
+                    ctx.fillStyle = '#696969'; ctx.fillRect(24, 22, 3, 2);
+                }
+            ];
+
+            frames.forEach((f, i) => { ctx.save(); ctx.translate(i * 32, 0); f(); ctx.restore(); });
+        }
+
+        // ============ 광물 ============
+        const minerals = [
+            { name: '석탄', color: '#2a2a2a', shine: '#444', tier: 1 },
+            { name: '철광석', color: '#7a7a7a', shine: '#999', tier: 2 },
+            { name: '구리', color: '#d87034', shine: '#ff8c42', tier: 3 },
+            { name: '은', color: '#c0c0c0', shine: '#e8e8e8', tier: 4 },
+            { name: '금', color: '#ffd700', shine: '#ffed4e', tier: 5 },
+            { name: '다이아몬드', color: '#b9f2ff', shine: '#e0ffff', tier: 6 },
+            { name: '운석', color: '#1a1a1a', shine: '#ffd700', tier: 7 }
+        ];
+
+        function drawMineral(canvas, color, shine) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            const pattern = [
+                [0,0,0,0,1,1,1,1,0,0,0,0],
+                [0,0,1,1,2,2,2,2,1,1,0,0],
+                [0,1,2,2,2,2,2,2,2,2,1,0],
+                [1,2,2,2,3,3,2,2,2,2,2,1],
+                [1,2,2,3,3,3,3,2,2,2,2,1],
+                [1,2,2,2,3,3,2,2,2,2,2,1],
+                [1,2,2,2,2,2,2,2,2,2,2,1],
+                [0,1,2,2,2,2,2,2,2,2,1,0],
+                [0,0,1,1,2,2,2,2,1,1,0,0],
+                [0,0,0,0,1,1,1,1,0,0,0,0]
+            ];
+
+            const colors = ['transparent', '#000', color, shine];
+            pattern.forEach((row, y) => {
+                row.forEach((val, x) => {
+                    if (val > 0) {
+                        ctx.fillStyle = colors[val];
+                        ctx.fillRect(10 + x * 3, 11 + y * 3, 3, 3);
+                    }
+                });
+            });
+        }
+
+        function createMinerals() {
+            const container = document.getElementById('minerals');
+            minerals.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${m.name}</div>
+                    <canvas id="mineral-${m.name}" width="32" height="32"></canvas>
+                    <div class="desc">Tier ${m.tier}</div>
+                `;
+                container.appendChild(div);
+                drawMineral(document.getElementById(`mineral-${m.name}`), m.color, m.shine);
+            });
+        }
+
+        // ============ 곡괭이 ============
+        const pickaxes = [
+            { name: '나무', handle: '#8b4513', head: '#a0522d' },
+            { name: '돌', handle: '#8b4513', head: '#808080' },
+            { name: '철', handle: '#8b4513', head: '#c0c0c0' },
+            { name: '강철', handle: '#654321', head: '#d3d3d3' },
+            { name: '금', handle: '#8b4513', head: '#ffd700' },
+            { name: '다이아', handle: '#4a4a4a', head: '#b9f2ff' },
+            { name: '미스릴', handle: '#4a4a4a', head: '#87ceeb' },
+            { name: '전설', handle: '#2a2a2a', head: '#ff00ff' }
+        ];
+
+        function drawPickaxe(canvas, handleColor, headColor, legendary = false) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = handleColor; ctx.fillRect(14, 18, 4, 12);
+            ctx.fillStyle = headColor;
+            ctx.fillRect(6, 8, 20, 6);
+            ctx.fillRect(8, 10, 2, 4); ctx.fillRect(22, 10, 2, 4);
+            ctx.fillRect(4, 10, 2, 2); ctx.fillRect(26, 10, 2, 2);
+            if (legendary) {
+                ctx.fillStyle = '#ffff00';
+                ctx.fillRect(8, 6, 2, 2); ctx.fillRect(22, 6, 2, 2); ctx.fillRect(15, 7, 2, 2);
+            }
+        }
+
+        function createPickaxes() {
+            const container = document.getElementById('pickaxes');
+            pickaxes.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${p.name} 곡괭이</div>
+                    <canvas id="pick-${i}" width="32" height="32"></canvas>
+                `;
+                container.appendChild(div);
+                drawPickaxe(document.getElementById(`pick-${i}`), p.handle, p.head, i >= 6);
+            });
+        }
+
+        // ============ 건물 ============
+        const buildings = [
+            { name: '집', size: 64, draw: drawHouse },
+            { name: '상점', size: 64, draw: drawShop },
+            { name: '대장간', size: 64, draw: drawSmithy },
+            { name: '광산입구', size: 64, draw: drawMineEntrance }
+        ];
+
+        function drawHouse(ctx) {
+            // 지붕
+            ctx.fillStyle = '#8b4513';
+            for (let i = 0; i < 16; i++) {
+                ctx.fillRect(16 - i, 8 + i, i * 2, 2);
+            }
+            // 벽
+            ctx.fillStyle = '#d2691e';
+            ctx.fillRect(16, 24, 32, 32);
+            // 문
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(26, 40, 12, 16);
+            // 창문
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillRect(20, 30, 8, 8);
+            ctx.fillRect(36, 30, 8, 8);
+        }
+
+        function drawShop(ctx) {
+            // 지붕
+            ctx.fillStyle = '#dc143c';
+            for (let i = 0; i < 16; i++) {
+                ctx.fillRect(16 - i, 8 + i, i * 2, 2);
+            }
+            // 벽
+            ctx.fillStyle = '#f5deb3';
+            ctx.fillRect(16, 24, 32, 32);
+            // 간판
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(20, 18, 24, 8);
+            ctx.fillStyle = '#000';
+            ctx.font = '8px monospace';
+            ctx.fillText('SHOP', 26, 24);
+            // 문
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(26, 40, 12, 16);
+        }
+
+        function drawSmithy(ctx) {
+            // 지붕
+            ctx.fillStyle = '#696969';
+            for (let i = 0; i < 16; i++) {
+                ctx.fillRect(16 - i, 8 + i, i * 2, 2);
+            }
+            // 벽
+            ctx.fillStyle = '#8b8b8b';
+            ctx.fillRect(16, 24, 32, 32);
+            // 용광로 (창문 대신)
+            ctx.fillStyle = '#ff4500';
+            ctx.fillRect(24, 32, 16, 12);
+            ctx.fillStyle = '#ff8c00';
+            ctx.fillRect(26, 34, 12, 8);
+            // 문
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(26, 46, 12, 10);
+        }
+
+        function drawMineEntrance(ctx) {
+            // 산
+            ctx.fillStyle = '#696969';
+            ctx.fillRect(0, 32, 64, 32);
+            for (let i = 0; i < 32; i++) {
+                ctx.fillRect(i, 32 - i/2, 1, 32 + i/2);
+                ctx.fillRect(64 - i, 32 - i/2, 1, 32 + i/2);
+            }
+            // 동굴 입구
+            ctx.fillStyle = '#000';
+            ctx.fillRect(20, 40, 24, 24);
+            // 아치
+            ctx.fillStyle = '#8b4513';
+            for (let i = 0; i < 12; i++) {
+                ctx.fillRect(20 + i, 40 - i/2, 1, 2);
+                ctx.fillRect(44 - i, 40 - i/2, 1, 2);
+            }
+            // 레일
+            ctx.fillStyle = '#8b8b8b';
+            ctx.fillRect(26, 56, 2, 8);
+            ctx.fillRect(36, 56, 2, 8);
+        }
+
+        function createBuildings() {
+            const container = document.getElementById('buildings');
+            buildings.forEach(b => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${b.name}</div>
+                    <canvas id="building-${b.name}" width="${b.size}" height="${b.size}"></canvas>
+                    <div class="desc">${b.size}x${b.size}</div>
+                `;
+                container.appendChild(div);
+                const canvas = document.getElementById(`building-${b.name}`);
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                b.draw(ctx);
+            });
+        }
+
+        // ============ NPC ============
+        function drawShopkeeper(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            // 머리
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(12, 4, 8, 4);
+            // 얼굴
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(12, 8, 8, 6);
+            // 옷 (초록 에이프런)
+            ctx.fillStyle = '#228b22';
+            ctx.fillRect(10, 14, 12, 10);
+            // 팔
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(8, 16, 2, 6);
+            ctx.fillRect(22, 16, 2, 6);
+            // 다리
+            ctx.fillStyle = '#2f4f4f';
+            ctx.fillRect(12, 24, 3, 6);
+            ctx.fillRect(17, 24, 3, 6);
+        }
+
+        function drawBlacksmith(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            // 머리 (빨간 두건)
+            ctx.fillStyle = '#dc143c';
+            ctx.fillRect(12, 4, 8, 4);
+            // 얼굴
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(12, 8, 8, 6);
+            // 옷 (갈색 앞치마)
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(10, 14, 12, 10);
+            // 팔
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(8, 16, 2, 6);
+            ctx.fillRect(22, 16, 2, 6);
+            // 망치 (손에)
+            ctx.fillStyle = '#696969';
+            ctx.fillRect(22, 20, 4, 2);
+            ctx.fillRect(24, 18, 2, 2);
+            // 다리
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(12, 24, 3, 6);
+            ctx.fillRect(17, 24, 3, 6);
+        }
+
+        function createNPCs() {
+            const container = document.getElementById('npcs');
+            const npcs = [
+                { name: '상점 주인', draw: drawShopkeeper },
+                { name: '대장장이', draw: drawBlacksmith }
+            ];
+
+            npcs.forEach(npc => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${npc.name}</div>
+                    <canvas id="npc-${npc.name}" width="32" height="32"></canvas>
+                `;
+                container.appendChild(div);
+                npc.draw(document.getElementById(`npc-${npc.name}`));
+            });
+        }
+
+        // ============ 배경 타일 ============
+        const backgrounds = [
+            { name: '집 바닥', color: '#8b7355', pattern: 'wood' },
+            { name: '마을 길', color: '#a0826d', pattern: 'stone' },
+            { name: '잔디', color: '#228b22', pattern: 'grass' }
+        ];
+
+        function drawBackground(canvas, color, pattern) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 32, 32);
+
+            if (pattern === 'wood') {
+                ctx.fillStyle = '#6b5345';
+                for (let i = 0; i < 32; i += 4) {
+                    ctx.fillRect(0, i, 32, 2);
+                }
+            } else if (pattern === 'stone') {
+                ctx.fillStyle = '#8b7365';
+                for (let y = 0; y < 32; y += 16) {
+                    for (let x = 0; x < 32; x += 16) {
+                        ctx.strokeRect(x, y, 16, 16);
+                    }
+                }
+            } else if (pattern === 'grass') {
+                ctx.fillStyle = '#32cd32';
+                for (let i = 0; i < 20; i++) {
+                    ctx.fillRect(Math.random() * 30, Math.random() * 30, 2, 2);
+                }
+            }
+        }
+
+        function createBackgrounds() {
+            const container = document.getElementById('backgrounds');
+            backgrounds.forEach(bg => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${bg.name}</div>
+                    <canvas id="bg-${bg.name}" width="32" height="32"></canvas>
+                `;
+                container.appendChild(div);
+                drawBackground(document.getElementById(`bg-${bg.name}`), bg.color, bg.pattern);
+            });
+        }
+
+        // ============ 광산 배경 ============
+        const mineBackgrounds = [
+            { name: 'Lv1 초원', color: '#8b7355' },
+            { name: 'Lv2 언덕', color: '#7a6a5a' },
+            { name: 'Lv3 산악', color: '#6b5a4a' },
+            { name: 'Lv4 심층', color: '#5a4a3a' },
+            { name: 'Lv5 화산', color: '#4a2a2a' },
+            { name: 'Lv6 수정', color: '#3a3a5a' },
+            { name: 'Lv7 유적', color: '#2a2a2a' }
+        ];
+
+        function drawMineBackground(canvas, color) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            const grad = ctx.createLinearGradient(0, 0, 0, 64);
+            grad.addColorStop(0, color);
+            grad.addColorStop(1, '#000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 64, 64);
+
+            // 암석 텍스처
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            for (let i = 0; i < 30; i++) {
+                ctx.fillRect(Math.random() * 64, Math.random() * 64, 2, 2);
+            }
+        }
+
+        function createMineBackgrounds() {
+            const container = document.getElementById('mine-backgrounds');
+            mineBackgrounds.forEach(mb => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${mb.name} 광산</div>
+                    <canvas id="mine-${mb.name}" width="64" height="64"></canvas>
+                `;
+                container.appendChild(div);
+                drawMineBackground(document.getElementById(`mine-${mb.name}`), mb.color);
+            });
+        }
+
+        // ============ UI ============
+        function createUI() {
+            const container = document.getElementById('ui');
+            const items = [
+                { name: 'HP바 (빈)', id: 'hp-empty', draw: drawHPBarEmpty },
+                { name: 'HP바 (50%)', id: 'hp-half', draw: drawHPBarHalf },
+                { name: 'HP바 (가득)', id: 'hp-full', draw: drawHPBarFull },
+                { name: '데미지 -120', id: 'dmg', draw: drawDamage },
+                { name: '버튼', id: 'btn', draw: drawButton }
+            ];
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${item.name}</div>
+                    <canvas id="${item.id}" width="64" height="16"></canvas>
+                `;
+                container.appendChild(div);
+                item.draw(document.getElementById(item.id));
+            });
+        }
+
+        function drawHPBarEmpty(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 4, 64, 8);
+            ctx.fillStyle = '#333';
+            ctx.fillRect(2, 6, 60, 4);
+        }
+
+        function drawHPBarHalf(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 4, 64, 8);
+            ctx.fillStyle = '#ff8800';
+            ctx.fillRect(2, 6, 30, 4);
+        }
+
+        function drawHPBarFull(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 4, 64, 8);
+            ctx.fillStyle = '#00ff00';
+            ctx.fillRect(2, 6, 60, 4);
+        }
+
+        function drawDamage(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText('-120', 20, 12);
+        }
+
+        function drawButton(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(8, 2, 48, 12);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(10, 4, 44, 8);
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '8px monospace';
+            ctx.fillText('BUTTON', 16, 10);
+        }
+
+        // ============ 이펙트 ============
+        function createEffects() {
+            const container = document.getElementById('effects');
+            const effects = [
+                { name: '타격 1', id: 'hit1', draw: (ctx) => {
+                    ctx.fillStyle = '#ffff00';
+                    ctx.fillRect(14, 14, 4, 4);
+                    ctx.fillRect(12, 16, 2, 2);
+                    ctx.fillRect(18, 16, 2, 2);
+                }},
+                { name: '타격 2', id: 'hit2', draw: (ctx) => {
+                    ctx.fillStyle = '#ffaa00';
+                    ctx.fillRect(10, 10, 4, 4);
+                    ctx.fillRect(18, 10, 4, 4);
+                    ctx.fillRect(10, 18, 4, 4);
+                    ctx.fillRect(18, 18, 4, 4);
+                }},
+                { name: '크리티컬!', id: 'crit', draw: (ctx) => {
+                    ctx.fillStyle = '#ff00ff';
+                    ctx.fillRect(15, 8, 2, 16);
+                    ctx.fillRect(8, 15, 16, 2);
+                    ctx.fillRect(11, 11, 2, 2);
+                    ctx.fillRect(19, 11, 2, 2);
+                    ctx.fillRect(11, 19, 2, 2);
+                    ctx.fillRect(19, 19, 2, 2);
+                }}
+            ];
+
+            effects.forEach(eff => {
+                const div = document.createElement('div');
+                div.className = 'sprite-item';
+                div.innerHTML = `
+                    <div class="label">${eff.name}</div>
+                    <canvas id="${eff.id}" width="32" height="32"></canvas>
+                `;
+                container.appendChild(div);
+                const ctx = document.getElementById(eff.id).getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                eff.draw(ctx);
+            });
+        }
+
+        // ============ 다운로드 ============
+        function downloadAllSprites() {
+            const sheet = document.createElement('canvas');
+            sheet.width = 1024;
+            sheet.height = 1024;
+            const ctx = sheet.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            let x = 10, y = 10;
+            const allCanvases = document.querySelectorAll('canvas');
+
+            allCanvases.forEach(canvas => {
+                if (x + canvas.width > 1014) {
+                    x = 10;
+                    y += 80;
+                }
+                ctx.drawImage(canvas, x, y);
+                x += canvas.width + 10;
+            });
+
+            const link = document.createElement('a');
+            link.download = 'mine-digger-all-sprites.png';
+            link.href = sheet.toDataURL();
+            link.click();
+
+            alert('모든 스프라이트가 다운로드되었습니다!');
+        }
+
+        // ============ 초기화 ============
+        window.onload = () => {
+            drawCharacterIdle(document.getElementById('char-idle'));
+            drawCharacterMining(document.getElementById('char-mining'));
+            createMinerals();
+            createPickaxes();
+            createBuildings();
+            createNPCs();
+            createBackgrounds();
+            createMineBackgrounds();
+            createUI();
+            createEffects();
+        };
+    </script>
+</body>
+</html>
