@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>광물캐기 RPG</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,12 +17,54 @@ body {
   min-height: 100vh;
   color: #fff;
   padding: 50px 0;
+  overflow: hidden;
+  touch-action: none;
 }
-#game { position: relative; width: 1000px; background: #000; border: 2px solid #333; overflow: visible; }
+#game {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  background: #000;
+  border: 2px solid #333;
+  overflow: visible;
+}
+@media (max-width: 1000px) {
+  body { padding: 10px; }
+  #game {
+    width: 100vw;
+    height: 100vw;
+    max-width: 100vw;
+    border: none;
+  }
+}
 canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 #ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 #ui > * { pointer-events: auto; }
-.hud { position: absolute; top: -90px; left: -2px; width: 1004px; padding: 12px; background: rgba(42,42,42,0.95); font-size: 14px; pointer-events: none; border: 2px solid #333; border-bottom: none; }
+.hud {
+  position: absolute;
+  top: -90px;
+  left: -2px;
+  width: calc(100% + 4px);
+  padding: 12px;
+  background: rgba(42,42,42,0.95);
+  font-size: 14px;
+  pointer-events: none;
+  border: 2px solid #333;
+  border-bottom: none;
+}
+@media (max-width: 1000px) {
+  .hud {
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 11px;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid #333;
+    position: fixed;
+    z-index: 1000;
+  }
+}
 .hud-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
 .exp-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin-top: 3px; }
 .exp-fill { height: 100%; background: linear-gradient(to right, #4169e1, #00ffff); transition: width 0.3s; }
@@ -56,6 +100,74 @@ canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edge
 .stat-btn { background: #4169e1; color: #fff; border: none; padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 3px; cursor: pointer; margin-top: 6px; }
 .stat-btn:disabled { background: #555; cursor: not-allowed; }
 .points { text-align: center; font-size: 16px; font-weight: 700; color: #00ff00; margin-bottom: 10px; }
+.touch-controls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+.touch-controls > * { pointer-events: auto; }
+.dpad {
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  display: grid;
+  grid-template-areas: ". up ." "left center right" ". down .";
+  gap: 8px;
+}
+.d-btn {
+  width: 60px;
+  height: 60px;
+  background: rgba(65,105,225,0.5);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.d-btn:active { background: rgba(65,105,225,0.8); }
+.d-btn.up { grid-area: up; }
+.d-btn.down { grid-area: down; }
+.d-btn.left { grid-area: left; }
+.d-btn.right { grid-area: right; }
+.action-btns {
+  position: absolute;
+  bottom: 0;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.a-btn {
+  width: 70px;
+  height: 70px;
+  background: rgba(220,20,60,0.5);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.a-btn:active { background: rgba(220,20,60,0.8); }
+@media (max-width: 1000px) {
+  .touch-controls { display: block; }
+  .info { display: none; }
+}
 </style>
 </head>
 <body>
@@ -148,6 +260,19 @@ canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edge
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="touch-controls">
+    <div class="dpad">
+      <div class="d-btn up" id="t-up">↑</div>
+      <div class="d-btn down" id="t-down">↓</div>
+      <div class="d-btn left" id="t-left">←</div>
+      <div class="d-btn right" id="t-right">→</div>
+    </div>
+    <div class="action-btns">
+      <div class="a-btn" id="t-menu">☰</div>
+      <div class="a-btn" id="t-action">⚡</div>
     </div>
   </div>
 </div>
@@ -290,6 +415,29 @@ class Game{
       if(e.key.toLowerCase()=='s'){e.preventDefault();if(!this.anyModalOpen())this.showStats();}
     });
     document.addEventListener('keyup',e=>this.k[e.key.toLowerCase()]=false);
+
+    // Touch controls
+    const touchStart=(dir)=>()=>{this.k[dir]=true;};
+    const touchEnd=(dir)=>()=>{this.k[dir]=false;};
+
+    document.getElementById('t-up').addEventListener('touchstart',touchStart('w'));
+    document.getElementById('t-up').addEventListener('touchend',touchEnd('w'));
+    document.getElementById('t-down').addEventListener('touchstart',touchStart('s'));
+    document.getElementById('t-down').addEventListener('touchend',touchEnd('s'));
+    document.getElementById('t-left').addEventListener('touchstart',touchStart('a'));
+    document.getElementById('t-left').addEventListener('touchend',touchEnd('a'));
+    document.getElementById('t-right').addEventListener('touchstart',touchStart('d'));
+    document.getElementById('t-right').addEventListener('touchend',touchEnd('d'));
+
+    document.getElementById('t-action').addEventListener('touchstart',(e)=>{
+      e.preventDefault();
+      this.act();
+    });
+
+    document.getElementById('t-menu').addEventListener('touchstart',(e)=>{
+      e.preventDefault();
+      this.toggleMenu();
+    });
 
     this.load();
     this.chg('home');
