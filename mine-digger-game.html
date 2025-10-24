@@ -278,28 +278,56 @@ canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edge
 </div>
 
 <script>
+// 이미지 로딩 시스템
+const IMAGES = {};
+function loadImage(src) {
+  if (!IMAGES[src]) {
+    const img = new Image();
+    img.src = src;
+    IMAGES[src] = img;
+  }
+  return IMAGES[src];
+}
+
+// 이미지 또는 이모지 그리기 헬퍼
+function drawImageOrEmoji(ctx, imgSrc, emoji, x, y, w, h, fontSize='34px') {
+  if(imgSrc) {
+    const img = loadImage(imgSrc);
+    if(img.complete) {
+      ctx.drawImage(img, x, y, w, h);
+      return true;
+    }
+  }
+  // 이미지 없거나 로딩 중이면 emoji 사용
+  ctx.font = fontSize + ' Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, x + w/2, y + h/2);
+  return false;
+}
+
 const M=[
-  {n:'석탄',i:'⚫',c:'#2a2a2a',h:20,d:0,p:3,x:2,t:1},
-  {n:'점토',i:'🟤',c:'#8b4513',h:25,d:0,p:4,x:2,t:1},
-  {n:'자갈',i:'⚪',c:'#999',h:30,d:0,p:2,x:1,t:1},
-  {n:'철광석',i:'🔳',c:'#666',h:80,d:5,p:12,x:5,t:2},
-  {n:'주석',i:'⬜',c:'#aaa',h:100,d:6,p:15,x:6,t:2},
-  {n:'황철석',i:'🟨',c:'#b8860b',h:120,d:8,p:18,x:7,t:2,w:'sun'},
-  {n:'구리',i:'🟧',c:'#cd7f32',h:250,d:15,p:40,x:15,t:3},
-  {n:'아연',i:'◼️',c:'#7f8c8d',h:280,d:18,p:45,x:17,t:3},
-  {n:'니켈',i:'◽',c:'#c0c0c0',h:320,d:20,p:50,x:20,t:3,w:'snow'},
-  {n:'은',i:'⚪',c:'#c0c0c0',h:600,d:30,p:120,x:40,t:4,w:'moon'},
-  {n:'티타늄',i:'💿',c:'#dcdcdc',h:700,d:35,p:140,x:45,t:4},
-  {n:'백금',i:'◻️',c:'#e5e4e2',h:850,d:40,p:170,x:55,t:4},
-  {n:'금',i:'🟡',c:'#ffd700',h:1500,d:50,p:400,x:100,t:5,w:'sun'},
-  {n:'자수정',i:'🟣',c:'#9966cc',h:1700,d:55,p:450,x:110,t:5},
-  {n:'비취',i:'🟢',c:'#00a86b',h:2000,d:60,p:520,x:130,t:5,w:'rain'},
-  {n:'다이아',i:'💎',c:'#b9f2ff',h:4000,d:100,p:1500,x:300,t:6},
-  {n:'에메랄드',i:'💚',c:'#50c878',h:4500,d:110,p:1700,x:330,t:6,w:'rain'},
-  {n:'루비',i:'❤️',c:'#e0115f',h:5000,d:120,p:1900,x:360,t:6,w:'sun'},
-  {n:'운석',i:'☄️',c:'#4a0080',h:12000,d:200,p:6000,x:800,t:7,w:'moon'},
-  {n:'미스릴',i:'✨',c:'#00ffff',h:18000,d:250,p:9000,x:1200,t:7,w:'snow'},
-  {n:'아다만',i:'🔷',c:'#0000cd',h:25000,d:300,p:12000,x:1600,t:7}
+  {n:'석탄',i:'⚫',img:'assets/minerals/coal.png',c:'#2a2a2a',h:20,d:0,p:3,x:2,t:1},
+  {n:'점토',i:'🟤',img:'assets/minerals/clay.png',c:'#8b4513',h:25,d:0,p:4,x:2,t:1},
+  {n:'자갈',i:'⚪',img:'assets/minerals/gravel.png',c:'#999',h:30,d:0,p:2,x:1,t:1},
+  {n:'철광석',i:'🔳',img:'assets/minerals/iron_ore.png',c:'#666',h:80,d:5,p:12,x:5,t:2},
+  {n:'주석',i:'⬜',img:'assets/minerals/tin.png',c:'#aaa',h:100,d:6,p:15,x:6,t:2},
+  {n:'황철석',i:'🟨',img:'assets/minerals/pyrite.png',c:'#b8860b',h:120,d:8,p:18,x:7,t:2,w:'sun'},
+  {n:'구리',i:'🟧',img:'assets/minerals/copper.png',c:'#cd7f32',h:250,d:15,p:40,x:15,t:3},
+  {n:'아연',i:'◼️',img:'assets/minerals/zinc.png',c:'#7f8c8d',h:280,d:18,p:45,x:17,t:3},
+  {n:'니켈',i:'◽',img:'assets/minerals/nickel.png',c:'#c0c0c0',h:320,d:20,p:50,x:20,t:3,w:'snow'},
+  {n:'은',i:'⚪',img:'assets/minerals/silver.png',c:'#c0c0c0',h:600,d:30,p:120,x:40,t:4,w:'moon'},
+  {n:'티타늄',i:'💿',img:'assets/minerals/titanium.png',c:'#dcdcdc',h:700,d:35,p:140,x:45,t:4},
+  {n:'백금',i:'◻️',img:'assets/minerals/platinum.png',c:'#e5e4e2',h:850,d:40,p:170,x:55,t:4},
+  {n:'금',i:'🟡',img:'assets/minerals/gold.png',c:'#ffd700',h:1500,d:50,p:400,x:100,t:5,w:'sun'},
+  {n:'자수정',i:'🟣',img:'assets/minerals/amethyst.png',c:'#9966cc',h:1700,d:55,p:450,x:110,t:5},
+  {n:'비취',i:'🟢',img:'assets/minerals/jade.png',c:'#00a86b',h:2000,d:60,p:520,x:130,t:5,w:'rain'},
+  {n:'다이아',i:'💎',img:'assets/minerals/diamond.png',c:'#b9f2ff',h:4000,d:100,p:1500,x:300,t:6},
+  {n:'에메랄드',i:'💚',img:'assets/minerals/emerald.png',c:'#50c878',h:4500,d:110,p:1700,x:330,t:6,w:'rain'},
+  {n:'루비',i:'❤️',img:'assets/minerals/ruby.png',c:'#e0115f',h:5000,d:120,p:1900,x:360,t:6,w:'sun'},
+  {n:'운석',i:'☄️',img:'assets/minerals/meteorite.png',c:'#4a0080',h:12000,d:200,p:6000,x:800,t:7,w:'moon'},
+  {n:'미스릴',i:'✨',img:'assets/minerals/mithril.png',c:'#00ffff',h:18000,d:250,p:9000,x:1200,t:7,w:'snow'},
+  {n:'아다만',i:'🔷',img:'assets/minerals/adamantium.png',c:'#0000cd',h:25000,d:300,p:12000,x:1600,t:7}
 ];
 const P=[
   {n:'나무',a:3,u:Infinity,m:Infinity,p:0,c:'#8b4513'},
@@ -619,36 +647,30 @@ class Game{
     this.cx.fillRect(0,0,T*3,600);
     this.cx.fillRect(T*15,0,T*3,600);
 
+    // 침대 렌더링
     this.cx.fillStyle='#8b4513';
     this.cx.fillRect(7*T,7*T,T*5,T*4);
     this.cx.fillStyle='#ff6b6b';
     this.cx.fillRect(7*T+4,7*T+4,T*5-8,T*4-8);
-    this.cx.font='80px Arial';
-    this.cx.textAlign='center';
-    this.cx.textBaseline='middle';
-    this.cx.fillText('🛏️',9.5*T,9*T);
+    drawImageOrEmoji(this.cx, 'assets/buildings/bed.png', '🛏️', 7*T, 7*T, T*5, T*4, '80px');
 
+    // TV 렌더링
     this.cx.fillStyle='#1a1a1a';
     this.cx.fillRect(4*T,2*T,T*2,T*3);
     this.cx.fillStyle='#333';
     this.cx.fillRect(4*T+4,2*T+4,T*2-8,T*3-8);
     this.cx.fillStyle='#4169e1';
     this.cx.fillRect(4*T+8,2*T+8,T*2-16,T*2-16);
-    this.cx.font='18px Arial';
-    this.cx.fillStyle='#fff';
-    this.cx.fillText('TV',5*T,3*T);
+    drawImageOrEmoji(this.cx, 'assets/buildings/tv.png', 'TV', 4*T, 2*T, T*2, T*3, '18px');
     this.cx.font='34px Arial';
     this.cx.fillText(this.ws.n,5*T,4*T);
 
+    // 집 문 렌더링
     this.cx.fillStyle='#654321';
     this.cx.fillRect(8*T,T*16,T*2,T*2);
     this.cx.fillStyle='#8b4513';
     this.cx.fillRect(8*T+4,T*16+4,T*2-8,T*2-8);
-    this.cx.font='54px Arial';
-    this.cx.textAlign='center';
-    this.cx.textBaseline='middle';
-    this.cx.fillStyle='#000';
-    this.cx.fillText('🚪',9*T,17*T);
+    drawImageOrEmoji(this.cx, 'assets/buildings/door.png', '🚪', 8*T, T*16, T*2, T*2, '54px');
     this.cx.font='20px Arial';
     this.cx.fillStyle='#ffd700';
     this.cx.fillText('마을',9*T,17.8*T);
@@ -663,24 +685,22 @@ class Game{
     for(let y=4;y<15;y++)for(let x=0;x<W;x++)this.cx.fillRect(x*T+8,y*T+12,T-16,T-24);
 
     if(this.vl==1){
+      // 집 아이콘
       this.cx.fillStyle='#654321';
       this.cx.fillRect(2*T,2*T,T*2,T*2);
       this.cx.fillStyle='#8b4513';
       this.cx.fillRect(2*T+4,2*T+4,T*2-8,T*2-8);
-      this.cx.font='54px Arial';
-      this.cx.fillStyle='#000';
-      this.cx.fillText('🏠',3*T,3*T);
+      drawImageOrEmoji(this.cx, 'assets/buildings/house.png', '🏠', 2*T, 2*T, T*2, T*2, '54px');
       this.cx.font='18px Arial';
       this.cx.fillStyle='#ffd700';
       this.cx.fillText('집',3*T,3.8*T);
 
+      // 상점 아이콘
       this.cx.fillStyle='#b8860b';
       this.cx.fillRect(14*T,2*T,T*2,T*2);
       this.cx.fillStyle='#000';
       this.cx.fillRect(14*T+8,2*T+8,T*2-16,T*2-16);
-      this.cx.font='40px Arial';
-      this.cx.fillStyle='#fff';
-      this.cx.fillText('🏪',15*T,3*T);
+      drawImageOrEmoji(this.cx, 'assets/buildings/shop.png', '🏪', 14*T, 2*T, T*2, T*2, '40px');
       this.cx.font='18px Arial';
       this.cx.fillStyle='#ffd700';
       this.cx.fillText('상점',15*T,3.8*T);
@@ -774,10 +794,25 @@ class Game{
       }
       this.cx.fillStyle='rgba(255,255,255,0.3)';
       this.cx.fillRect(px+8,py+8,12,12);
-      this.cx.font='34px Arial';
-      this.cx.textAlign='center';
-      this.cx.textBaseline='middle';
-      this.cx.fillText(m.i,px+T/2,py+T/2);
+
+      // 이미지가 있으면 이미지 사용, 없으면 emoji 사용
+      if(m.img){
+        const img = loadImage(m.img);
+        if(img.complete){
+          this.cx.drawImage(img, px+4, py+4, T-8, T-8);
+        } else {
+          // 이미지 로딩 중이면 emoji 표시
+          this.cx.font='34px Arial';
+          this.cx.textAlign='center';
+          this.cx.textBaseline='middle';
+          this.cx.fillText(m.i,px+T/2,py+T/2);
+        }
+      } else {
+        this.cx.font='34px Arial';
+        this.cx.textAlign='center';
+        this.cx.textBaseline='middle';
+        this.cx.fillText(m.i,px+T/2,py+T/2);
+      }
       if(m.ch<m.h){
         const hp=m.ch/m.h;
         this.cx.fillStyle='#000';
